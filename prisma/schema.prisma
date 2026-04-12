@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  precio    Float
+  stock     Int      @default(0)
+  createdAt DateTime @default(now())
+  sales     Sale[]
+  purchases Purchase[]
+}
+
+model Sale {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  cantidad  Int
+  createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+model Purchase {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  cantidad  Int
+  createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+enum AccountingEntryType {
+  INCOME
+  EXPENSE
+}
+
+model AccountingEntry {
+  id           Int                 @id @default(autoincrement())
+  tipo         AccountingEntryType
+  monto        Float
+  descripcion  String
+  referenciaId Int?
+  createdAt    DateTime            @default(now())
+}
