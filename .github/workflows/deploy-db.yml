@@ -1,0 +1,32 @@
+name: Database Deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'prisma/schema.prisma'
+      - 'prisma/migrations/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Prisma Only
+        run: npm install prisma --save-dev
+
+      - name: Wait for DB to wake up
+        run: sleep 10
+
+      - name: Apply Migrations
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
