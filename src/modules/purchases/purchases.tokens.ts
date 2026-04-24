@@ -1,1 +1,2 @@
-export const PURCHASE_REPOSITORY_TOKEN = 'IPurchaseRepository' as const;
+export const PURCHASES_SERVICE_TOKEN = 'IPurchasesService' as const;
+export const PURCHASES_REPOSITORY_TOKEN = 'IPurchasesRepository' as const;

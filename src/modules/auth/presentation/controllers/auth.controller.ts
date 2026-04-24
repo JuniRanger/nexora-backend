@@ -1,23 +1,34 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { LoginUseCase } from '../../application/use-cases/login.use-case';
-import { RegisterUseCase } from '../../application/use-cases/register.use-case';
-import { LoginDto } from '../dtos/login.dto';
-import { RegisterDto } from '../dtos/register.dto';
+import {
+  Body,
+  Controller,
+  Headers,
+  Ip,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
+import { AuthService } from '../../application/services/auth.service';
+import { LoginRequestDto } from '../dto/requests/login-request';
+import { LoginResponseDto } from '../dto/responses/login-response';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly loginUseCase: LoginUseCase,
-    private readonly registerUseCase: RegisterUseCase,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  login(@Body() body: LoginDto) {
-    return this.loginUseCase.execute(body);
+  login(
+    @Body() dto: LoginRequestDto,
+    @Ip() ipAddress: string,
+    @Headers('user-agent') userAgent?: string,
+  ): Promise<LoginResponseDto> {
+    return this.authService.login(dto, ipAddress, userAgent ?? '');
   }
 
-  @Post('register')
-  register(@Body() body: RegisterDto) {
-    return this.registerUseCase.execute(body);
+  @Post('logout/:sessionId')
+  async logout(
+    @Param('sessionId', ParseIntPipe) sessionId: number,
+  ): Promise<{ message: string }> {
+    await this.authService.logout(sessionId);
+    return { message: 'Logout successful' };
   }
 }

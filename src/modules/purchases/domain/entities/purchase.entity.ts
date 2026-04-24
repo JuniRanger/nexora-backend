@@ -1,6 +1,11 @@
-export interface Purchase {
+export type PurchaseStatus = 'PENDING' | 'RECEIVED' | 'CANCELLED';
+
+export interface PurchaseEntity {
   id: number;
-  productId: number;
-  cantidad: number;
+  supplierId: number | null;
+  total: number;
+  status: PurchaseStatus;
+  isActive: boolean;
   createdAt: Date;
+  updatedAt: Date;
 }

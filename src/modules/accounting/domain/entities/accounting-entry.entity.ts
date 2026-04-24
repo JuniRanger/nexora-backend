@@ -1,10 +1,13 @@
 export type AccountingEntryType = 'INCOME' | 'EXPENSE';
 
-export interface AccountingEntry {
+export interface AccountingEntryEntity {
   id: number;
   tipo: AccountingEntryType;
   monto: number;
   descripcion: string;
-  referenciaId: number | null;
+  saleId: number | null;
+  purchaseId: number | null;
+  isActive: boolean;
   createdAt: Date;
+  updatedAt: Date;
 }

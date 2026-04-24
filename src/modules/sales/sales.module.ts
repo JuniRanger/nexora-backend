@@ -1,19 +1,22 @@
 import { Module } from '@nestjs/common';
-import { InventoryModule } from '../inventory/inventory.module';
-import { CreateSaleUseCase } from './application/use-cases/create-sale.use-case';
-import { SALE_REPOSITORY_TOKEN } from './sales.tokens';
-import { SaleRepository } from './infrastructure/repositories/sale.repository';
+import { SalesService } from './application/services/sales.service';
+import { SalesRepository } from './infrastructure/repositories/sales.repository';
 import { SalesController } from './presentation/controllers/sales.controller';
+import { SALES_REPOSITORY_TOKEN, SALES_SERVICE_TOKEN } from './sales.tokens';
 
 @Module({
-  imports: [InventoryModule],
   controllers: [SalesController],
   providers: [
-    CreateSaleUseCase,
+    SalesService,
     {
-      provide: SALE_REPOSITORY_TOKEN,
-      useClass: SaleRepository,
+      provide: SALES_SERVICE_TOKEN,
+      useExisting: SalesService,
+    },
+    {
+      provide: SALES_REPOSITORY_TOKEN,
+      useClass: SalesRepository,
     },
   ],
+  exports: [SalesService, SALES_SERVICE_TOKEN, SALES_REPOSITORY_TOKEN],
 })
 export class SalesModule {}

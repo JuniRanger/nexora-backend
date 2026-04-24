@@ -1,35 +1,31 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { LoginUseCase } from './application/use-cases/login.use-case';
-import { RegisterUseCase } from './application/use-cases/register.use-case';
-import {
-  AUTH_TOKEN_SERVICE_TOKEN,
-  PASSWORD_HASHER_TOKEN,
-  USER_REPOSITORY_TOKEN,
-} from './auth.tokens';
-import { JwtAuthTokenService } from './infrastructure/services/jwt-auth-token.service';
-import { BcryptPasswordHasher } from './infrastructure/services/bcrypt-password-hasher.service';
-import { UserRepository } from './infrastructure/repositories/user.repository';
 import { AuthController } from './presentation/controllers/auth.controller';
+import { AuthService } from './application/services/auth.service';
+import { AuthRepository } from './infrastructure/repositories/auth.repository';
+import { AUTH_TOKEN_SERVICE_TOKEN, PASSWORD_HASHER_TOKEN } from './auth.tokens';
+import { BcryptPasswordHasherService } from './infrastructure/services/bcrypt-password-hasher.service';
+import { JwtAuthTokenService } from './infrastructure/services/jwt-auth-token.service';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
+    UsersModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET ?? 'nexora-dev-jwt-secret',
-      signOptions: { expiresIn: '7d' },
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: "7d" },
     }),
   ],
   controllers: [AuthController],
   providers: [
-    LoginUseCase,
-    RegisterUseCase,
+    AuthService,
     {
-      provide: USER_REPOSITORY_TOKEN,
-      useClass: UserRepository,
+      provide: 'IAuthRepository',
+      useClass: AuthRepository,
     },
     {
       provide: PASSWORD_HASHER_TOKEN,
-      useClass: BcryptPasswordHasher,
+      useClass: BcryptPasswordHasherService,
     },
     {
       provide: AUTH_TOKEN_SERVICE_TOKEN,

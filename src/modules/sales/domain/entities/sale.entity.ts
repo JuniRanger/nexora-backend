@@ -1,6 +1,12 @@
-export interface Sale {
+export type SaleStatus = 'DRAFT' | 'COMPLETED' | 'CANCELLED';
+
+export interface SaleEntity {
   id: number;
-  productId: number;
-  cantidad: number;
+  userId: number | null;
+  clientId: number | null;
+  total: number;
+  status: SaleStatus;
+  isActive: boolean;
   createdAt: Date;
+  updatedAt: Date;
 }
